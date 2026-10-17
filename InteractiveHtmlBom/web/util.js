@@ -541,14 +541,20 @@ function initDefaults() {
   }
   if (config.show_pnp === false) {
     bomCheckboxes = bomCheckboxes.split(",").filter((e) => e !== "PnP").join(",");
+  } else if (config.show_pnp &&
+             !bomCheckboxes.split(",").some((e) => e.trim() === "PnP")) {
+    // Make sure the PnP column is present on initial load even when the
+    // stored checkbox list predates the feature.
+    bomCheckboxes = bomCheckboxes ? bomCheckboxes + ",PnP" : "PnP";
   }
   settings.checkboxes = bomCheckboxes.split(",").filter((e) => e);
   document.getElementById("bomCheckboxes").value = bomCheckboxes;
 
   // Seed the PnP checkbox from the generated bom data when the user has
   // no stored state for it yet (this keeps the marks after an HTML reset).
+  var pnpStored = readStorage("checkbox_PnP");
   if (settings.checkboxes.includes("PnP") &&
-      readStorage("checkbox_PnP") === null &&
+      (pnpStored === null || pnpStored === "") &&
       pcbdata.bom && Array.isArray(pcbdata.bom.pnp)) {
     settings.checkboxStoredRefs["PnP"] = pcbdata.bom.pnp.join(",");
   }
