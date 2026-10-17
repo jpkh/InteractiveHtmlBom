@@ -338,6 +338,13 @@ def main(parser, config, logger):
     pcbdata["bom"] = generate_bom(components, config)
     pcbdata["ibom_version"] = config.version
 
+    if config.show_pnp and config.component_mapping_path:
+        from . import pnp
+        pnp_indexes = pnp.get_pnp_footprints(
+            components, config.component_mapping_path)
+        if pnp_indexes:
+            pcbdata["bom"]["pnp"] = pnp_indexes
+
     # build BOM
     bom_file = generate_file(pcb_file_dir, pcb_file_name, pcbdata, config)
 

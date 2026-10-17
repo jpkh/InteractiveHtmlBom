@@ -387,6 +387,21 @@ collisions when references are duplicated.
 ]
 ```
 
+## pnp indexes
+
+Optional field of the bom table: `"pnp"` is an array of footprint ids
+that matched the component mapping file (Ki-Qihe format) when
+"Show PnP components" is enabled and a "Component locations" file
+is configured. These footprints are pre-marked in the "PnP" checkbox
+column of the generated page.
+
+```js
+"bom": {
+  ...,
+  "pnp": [footprint_id, ...],
+}
+```
+
 # config struct
 
 ```js
@@ -399,6 +414,7 @@ config = {
   "redraw_on_drag": bool,
   "board_rotation": int,
   "checkboxes": "checkbox1,checkbox2,...",
+  "show_pnp": bool,
   "bom_view": "bom-only" | "left-right" | "top-bottom",
   "layer_view": "F" | "FB" | "B",
   "extra_fields": ["field1_name", "field2_name", ...],

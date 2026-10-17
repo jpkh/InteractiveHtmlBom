@@ -39,7 +39,8 @@ class Config:
         'dark_mode', 'show_pads', 'show_fabrication', 'show_silkscreen',
         'highlight_pin1', 'redraw_on_drag', 'board_rotation', 'checkboxes',
         'bom_view', 'layer_view', 'offset_back_rotation',
-        'kicad_text_formatting', 'mark_when_checked', 'custom_metadata'
+        'kicad_text_formatting', 'mark_when_checked', 'custom_metadata',
+        'show_pnp'
     ]
     default_show_group_fields = ["Value", "Footprint"]
 
@@ -55,6 +56,8 @@ class Config:
     board_rotation = 0
     offset_back_rotation = False
     checkboxes = ','.join(default_checkboxes)
+    show_pnp = True
+    component_mapping_path = ''
     mark_when_checked = ''
     bom_view = bom_view_choices[1]
     layer_view = layer_view_choices[1]
@@ -125,6 +128,9 @@ class Config:
         self.offset_back_rotation = f.ReadBool(
             'offset_back_rotation', self.offset_back_rotation)
         self.checkboxes = f.Read('checkboxes', self.checkboxes)
+        self.show_pnp = f.ReadBool('show_pnp', self.show_pnp)
+        self.component_mapping_path = f.Read(
+            'component_mapping_path', self.component_mapping_path)
         self.mark_when_checked = f.Read('mark_when_checked', self.mark_when_checked)
         self.bom_view = f.Read('bom_view', self.bom_view)
         self.layer_view = f.Read('layer_view', self.layer_view)
@@ -185,6 +191,8 @@ class Config:
         f.WriteInt('board_rotation', self.board_rotation)
         f.WriteBool('offset_back_rotation', self.offset_back_rotation)
         f.Write('checkboxes', self.checkboxes)
+        f.WriteBool('show_pnp', self.show_pnp)
+        f.Write('component_mapping_path', self.component_mapping_path)
         f.Write('mark_when_checked', self.mark_when_checked)
         f.Write('bom_view', self.bom_view)
         f.Write('layer_view', self.layer_view)
@@ -232,6 +240,8 @@ class Config:
         self.offset_back_rotation = \
             dlg.html.offsetBackRotationCheckbox.IsChecked()
         self.checkboxes = dlg.html.bomCheckboxesCtrl.Value
+        self.show_pnp = dlg.html.showPnpCheckbox.IsChecked()
+        self.component_mapping_path = dlg.html.componentMappingPicker.Path
         # No dialog for mark_when_checked ...
         self.bom_view = self.bom_view_choices[dlg.html.bomDefaultView.Selection]
         self.layer_view = self.layer_view_choices[
@@ -282,6 +292,8 @@ class Config:
         dlg.html.boardRotationSlider.Value = self.board_rotation
         dlg.html.offsetBackRotationCheckbox.Value = self.offset_back_rotation
         dlg.html.bomCheckboxesCtrl.Value = self.checkboxes
+        dlg.html.showPnpCheckbox.Value = self.show_pnp
+        dlg.html.componentMappingPicker.Path = self.component_mapping_path
         # No dialog for mark_when_checked ...
         dlg.html.bomDefaultView.Selection = self.bom_view_choices.index(
             self.bom_view)
@@ -394,6 +406,16 @@ class Config:
         parser.add_argument('--checkboxes',
                             default=cls.checkboxes,
                             help='Comma separated list of checkbox columns.')
+        parser.add_argument('--show-pnp', dest='show_pnp',
+                            action='store_true', default=None,
+                            help='Show the PnP checkbox column.')
+        parser.add_argument('--no-show-pnp', dest='show_pnp',
+                            action='store_false', default=None,
+                            help='Hide the PnP checkbox column.')
+        parser.add_argument('--component-mapping', dest='component_mapping_path',
+                            default=None,
+                            help='Path to the component mapping file '
+                                 '(Ki-Qihe format) used to mark PnP rows.')
         parser.add_argument('--mark-when-checked',
                             default=cls.mark_when_checked,
                             help='Name of the checkbox column used to mark '
@@ -548,6 +570,9 @@ class Config:
             ('html_defaults', 'offset_back_rotation', 'offset_back_rotation',
              'bool'),
             ('html_defaults', 'checkboxes', 'checkboxes', 'str'),
+            ('html_defaults', 'show_pnp', 'show_pnp', 'bool'),
+            ('html_defaults', 'component_mapping_path',
+             'component_mapping_path', 'str'),
             ('html_defaults', 'mark_when_checked', 'mark_when_checked',
              'str'),
             ('html_defaults', 'bom_view', 'bom_view', 'str'),
@@ -619,6 +644,10 @@ class Config:
             self.board_rotation = (self.board_rotation + 36) % 72 - 36
         self.offset_back_rotation = args.offset_back_rotation
         self.checkboxes = args.checkboxes
+        if args.show_pnp is not None:
+            self.show_pnp = args.show_pnp
+        if args.component_mapping_path is not None:
+            self.component_mapping_path = args.component_mapping_path
         self.mark_when_checked = args.mark_when_checked
         self.bom_view = args.bom_view
         self.layer_view = args.layer_view
@@ -654,5 +683,10 @@ class Config:
     def get_html_config(self):
         import json
         d = {f: getattr(self, f) for f in self.html_config_fields}
+        if self.show_pnp:
+            checkboxes = [c for c in d.get('checkboxes', '').split(',') if c]
+            if 'PnP' not in checkboxes:
+                checkboxes.append('PnP')
+            d['checkboxes'] = ','.join(checkboxes)
         d["fields"] = self.show_fields
         return json.dumps(d)

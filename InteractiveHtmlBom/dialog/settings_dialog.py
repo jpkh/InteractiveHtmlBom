@@ -108,6 +108,44 @@ class HtmlSettingsPanel(dialog_base.HtmlSettingsPanelBase):
     def __init__(self, parent):
         dialog_base.HtmlSettingsPanelBase.__init__(self, parent)
 
+        # Insert the PnP controls right after "Continuous redraw on drag"
+        sizer = self.GetSizer()
+        insert_index = None
+        for i, item in enumerate(sizer.GetChildren()):
+            if item.GetWindow() is self.continuousRedrawCheckbox:
+                insert_index = i + 1
+                break
+
+        self.showPnpCheckbox = wx.CheckBox(
+            self, wx.ID_ANY, "Show PnP components")
+        self.showPnpCheckbox.SetValue(True)
+        self.showPnpCheckbox.SetToolTip(
+            "Show a PnP checkbox column in the BOM, marked for parts "
+            "found in the component mapping file.")
+        if insert_index is not None:
+            sizer.Insert(insert_index, self.showPnpCheckbox, 0, wx.ALL, 5)
+            insert_index += 1
+        else:
+            sizer.Add(self.showPnpCheckbox, 0, wx.ALL, 5)
+
+        mapping_row = wx.BoxSizer(wx.HORIZONTAL)
+        mapping_label = wx.StaticText(
+            self, wx.ID_ANY, "Component locations:")
+        mapping_row.Add(
+            mapping_label, 0, wx.ALL | wx.ALIGN_CENTER_VERTICAL, 5)
+        self.componentMappingPicker = wx.FilePickerCtrl(
+            self, wx.ID_ANY, wx.EmptyString, wx.FileSelectorPromptStr,
+            "Text files (*.txt)|*.txt|All files (*.*)|*.*")
+        mapping_row.Add(
+            self.componentMappingPicker, 1, wx.ALL | wx.EXPAND, 5)
+        if insert_index is not None:
+            sizer.Insert(
+                insert_index, mapping_row, 0, wx.ALL | wx.EXPAND, 5)
+        else:
+            sizer.Add(mapping_row, 0, wx.ALL | wx.EXPAND, 5)
+
+        self.Layout()
+
     # Handlers for HtmlSettingsPanelBase events.
     def OnBoardRotationSlider(self, event):
         degrees = self.boardRotationSlider.Value * 5

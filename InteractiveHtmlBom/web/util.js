@@ -539,8 +539,19 @@ function initDefaults() {
   if (bomCheckboxes === null) {
     bomCheckboxes = config.checkboxes;
   }
+  if (config.show_pnp === false) {
+    bomCheckboxes = bomCheckboxes.split(",").filter((e) => e !== "PnP").join(",");
+  }
   settings.checkboxes = bomCheckboxes.split(",").filter((e) => e);
   document.getElementById("bomCheckboxes").value = bomCheckboxes;
+
+  // Seed the PnP checkbox from the generated bom data when the user has
+  // no stored state for it yet (this keeps the marks after an HTML reset).
+  if (settings.checkboxes.includes("PnP") &&
+      readStorage("checkbox_PnP") === null &&
+      pcbdata.bom && Array.isArray(pcbdata.bom.pnp)) {
+    settings.checkboxStoredRefs["PnP"] = pcbdata.bom.pnp.join(",");
+  }
 
   var highlightpin1 = readStorage("highlightpin1") || config.highlight_pin1;
   if (highlightpin1 === "false") highlightpin1 = "none";

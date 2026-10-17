@@ -6,6 +6,7 @@
 test
 releases
 demo
+tmp/
 *config.ini
 InteractiveHtmlBom/web/user*
 dist/
