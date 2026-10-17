@@ -50,12 +50,19 @@ if (not os.environ.get('INTERACTIVE_HTML_BOM_CLI_MODE', False) and
     sys.argv[0] != '-m'):
     from .ecad.kicad import InteractiveHtmlBomPlugin
 
-    plugin = InteractiveHtmlBomPlugin()
-    plugin.register()
+    plugin = None
+    try:
+        plugin = InteractiveHtmlBomPlugin()
+        plugin.register()
+    except Exception:
+        # Never crash pcbnew because of this plugin (jpkh fork rule).
+        import traceback
+        traceback.print_exc()
 
     # Add a button the hacky way if plugin button is not supported
     # in pcbnew, unless this is linux.
-    if not plugin.pcbnew_icon_support and not sys.platform.startswith('linux'):
+    if (plugin is not None and not plugin.pcbnew_icon_support and
+            not sys.platform.startswith('linux')):
         t = threading.Thread(target=check_for_bom_button)
         t.daemon = True
         t.start()

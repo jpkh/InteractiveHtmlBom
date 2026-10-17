@@ -25,6 +25,21 @@ and can be packaged with documentation of your project or hosted anywhere on the
 
 [A demo is worth a thousand words.](https://openscopeproject.org/InteractiveHtmlBomDemo/)
 
+## Fork additions (jpkh fork)
+
+This fork adds a "Show PnP components" checkbox column to the BOM:
+
+- **Html defaults** settings tab: `Show PnP components` checkbox (default on)
+  and a `Component locations` file picker.
+- Parts whose value and footprint match the Ki-Qihe component mapping file
+  (`component_mapping.txt`) are pre-marked in the **PnP** column, shown after
+  "Placed".
+- The marks are seeded from generated BOM data, so they survive an
+  Interactive HTML reset until edited.
+
+Everything else stays in sync with
+[upstream](https://github.com/openscopeproject/InteractiveHtmlBom).
+
 ## Installation and Usage
 
 See [project wiki](https://github.com/openscopeproject/InteractiveHtmlBom/wiki/Installation) for instructions.

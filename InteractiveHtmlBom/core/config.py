@@ -89,6 +89,10 @@ class Config:
     # this is cli only field
     kicad_variant = ''
 
+    # Custom metadata string embedded in the generated page (CLI only for
+    # now, but needs a default so the dialog flow can serialize it).
+    custom_metadata = ''
+
     @staticmethod
     def _split(s):
         """Splits string by ',' and drops empty strings from resulting array"""

@@ -1,0 +1,44 @@
+{
+    "$schema": "https://go.kicad.org/pcm/schemas/v1",
+    "name": "InteractiveHtmlBom",
+    "description": "Interactive BOM generator with PnP marking (jpkh fork)",
+    "description_full": "Generates a convenient, visually correlated Bill of Materials (BOM) page for a PCB. This fork of openscopeproject/InteractiveHtmlBom adds a 'Show PnP components' checkbox column: parts whose value and footprint match a Ki-Qihe component mapping file are pre-marked in a PnP column shown after 'Placed', and the marks survive an Interactive HTML reset. All other behavior stays in sync with upstream.",
+    "identifier": "com.github.jpkh.interactive-html-bom",
+    "type": "plugin",
+    "author": {
+        "name": "openscopeproject (qu1ck)",
+        "contact": {
+            "web": "https://github.com/openscopeproject/InteractiveHtmlBom"
+        }
+    },
+    "maintainer": {
+        "name": "Jani Hirvinen",
+        "contact": {
+            "email": "jpsecond@gmail.com"
+        }
+    },
+    "license": "MIT",
+    "resources": {
+        "Github": "https://github.com/jpkh/InteractiveHtmlBom",
+        "Readme": "https://github.com/jpkh/InteractiveHtmlBom/blob/master/README.md",
+        "Wiki": "https://github.com/openscopeproject/InteractiveHtmlBom/wiki"
+    },
+    "tags": [
+        "pcbnew",
+        "bom",
+        "assembly"
+    ],
+    "versions": [
+        {
+            "version": "2.12.1",
+            "status": "stable",
+            "kicad_version": "8.0",
+            "kicad_version_max": "10.99",
+            "platforms": [
+                "linux",
+                "macos",
+                "windows"
+            ]
+        }
+    ]
+}
